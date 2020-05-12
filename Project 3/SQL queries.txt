@@ -1,0 +1,80 @@
+﻿/*Query 1*/
+/*Who are the top music store purchasers in the USA in 2011?*/
+
+
+SELECT
+  C.FirstName || ' ' || C.LastName AS Customer_Name,
+  SUM(Total) AS Invoices_totals
+FROM Customer C
+JOIN Invoice I
+  ON C.CustomerId = I.CustomerId
+WHERE I.BillingCountry = 'USA'
+AND STRFTIME('%Y', I.InvoiceDate) = '2011'
+GROUP BY 1
+ORDER BY 2 DESC;
+
+
+
+
+
+
+
+
+/*Query 2*/
+/*Most purchased song genre ?*/
+
+
+
+
+
+
+SELECT
+  ge.Name AS genre_type,
+  COUNT(*) AS num_purchases
+FROM Genre ge
+JOIN Track tr
+  ON ge.GenreId = tr.GenreId
+JOIN InvoiceLine inv
+  ON tr.TrackId = inv.TrackId
+GROUP BY 1
+ORDER BY 2;
+
+
+
+
+/*Query 3*/
+/*What are the top 15 title songs with maximum duration (in millisecond)?*/
+
+
+SELECT Album.Title, max(Track.Milliseconds) milliseconds
+FROM Album
+JOIN Track
+ON Album.AlbumId = Track.AlbumId
+GROUP BY Album.Title 
+ORDER BY milliseconds
+lIMIT 15;
+
+
+
+
+/*Query 4*/
+/*What are the top 7 album’s sold in 2011 and 2012?*/
+
+
+SELECT
+  ar.Name Artist,
+  a.Title AlbumTitle,
+  SUM(il.Quantity * il.UnitPrice) Sales
+FROM Artist ar
+JOIN Album a
+  ON ar.ArtistID = a.ArtistId
+JOIN Track t
+  ON a.AlbumiD = t.AlbumId
+JOIN InvoiceLine il
+  ON t.TrackId = il.TrackId
+JOIN Invoice i
+  ON il.InvoiceId = i.InvoiceId
+WHERE i.InvoiceDate BETWEEN '2011-01-01' AND '2012-01-01'
+GROUP BY AlbumTitle
+ORDER BY Sales DESC
+LIMIT 7;
